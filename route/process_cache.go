@@ -47,8 +47,8 @@ func (r *Router) searchProcessInfo(ctx context.Context, metadata *adapter.Inboun
 	}
 	processInfo, err := r.findProcessInfoCached(ctx, metadata.Network, metadata.Source.AddrPort(), originDestination)
 	if err != nil {
-		r.logger.Debug("network:", metadata.Network, " dest:", metadata.Destination, " proc:", processInfo.ProcessID)
 		r.logger.InfoContext(ctx, "failed to search process: ", err)
+		r.logger.InfoContext(ctx, "Source.Addr: ", metadata.Source.Addr.String(), " Source.Port:", metadata.Source.Port)
 		return
 	}
 	metadata.ProcessInfo = processInfo
