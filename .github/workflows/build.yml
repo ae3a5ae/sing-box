@@ -826,7 +826,6 @@ jobs:
           echo "$RELEASE_KEYSTORE_BASE64" \
             | base64 --decode \
             > clients/android/app/release.keystore
-#          chmod 600 clients/android/app/release.keystore
       - name: Build
         run: |-
           mkdir -p clients/android/app/libs
