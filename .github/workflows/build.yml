@@ -729,11 +729,18 @@ jobs:
           compression-level: 0
       - name: Copy libbox.so
         run: |-
-          cp jni/arm64-v8a/libbox.so ./libbox.so
+          find . -name "libbox.so" -exec cp {} ./libbox.so \;
+          if [ -f "./libbox.so" ]; then
+          ls -lh ./libbox.so
+          else
+            echo "❌ Ошибка: файл libbox.so не найден в проекте!"
+            exit 1
+          fi
+
       - name: Upload libbox.so Archive
         uses: actions/upload-artifact@v4
         with:
-          name: libbox.so
+          name: libbox-arm64-v8a
           path: ./libbox.so
           compression-level: 8
   build_android:
