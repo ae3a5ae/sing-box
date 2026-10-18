@@ -678,9 +678,9 @@ jobs:
       fail-fast: false
       matrix:
         go_arch:
-          - "386"
-          - amd64
-          - arm
+#          - "386"
+#          - amd64
+#          - arm
           - arm64
     steps:
       - name: Checkout
