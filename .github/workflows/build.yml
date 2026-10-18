@@ -827,6 +827,7 @@ jobs:
             | base64 --decode \
             > clients/android/app/release.keystore
           chmod 600 clients/android/app/release.keystore
+          ls clients/android/app/release.keystore
           sha256sum clients/android/app/release.keystore
       - name: Build
         run: |-
