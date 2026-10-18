@@ -727,6 +727,15 @@ jobs:
           name: libbox-android-${{ matrix.go_arch }}
           path: dist
           compression-level: 0
+      - name: Copy libbox.so
+        run: |-
+          cp jni/arm64-v8a/libbox.so ./libbox.so
+      - name: Upload libbox.so Archive
+        uses: actions/upload-artifact@v4
+        with:
+          name: libbox.so
+          path: ./libbox.so
+          compression-level: 8
   build_android:
     name: Build Android (${{ matrix.variant }})
     if: (github.event_name != 'workflow_dispatch' || inputs.build == 'All' || inputs.build == 'Android') && github.ref != 'refs/heads/oldstable'
