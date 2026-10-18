@@ -832,8 +832,8 @@ jobs:
           mkdir -p clients/android/app/libs
           cp *.aar clients/android/app/libs
           cd clients/android
-          ls app/release.keystore
-          sha256sum app/release.keystore
+          echo $(ls app/release.keystore)
+          echo $(sha256sum app/release.keystore)
           ./gradlew --build-cache --parallel ${{ matrix.task }}
         env:
           ANDROID_NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
