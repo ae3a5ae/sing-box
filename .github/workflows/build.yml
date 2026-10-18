@@ -727,13 +727,28 @@ jobs:
           name: libbox-android-${{ matrix.go_arch }}
           path: dist
           compression-level: 0
-      - name: Copy libbox.so
+      - name: Extract libbox.so from APK
         run: |-
-          find . -name "libbox.so" -exec cp {} ./libbox.so \;
+          # 1. Находим собранный APK-файл (используем find, так как пути могут отличаться)
+          APK_PATH=$(find . -name "*.apk" | head -n 1)
+          
+          if [ -z "$APK_PATH" ]; then
+            echo "❌ Ошибка: Готовый APK-файл не найден! Сборка приложения не удалась."
+            exit 1
+          fi
+          
+          echo "📦 Найден APK: $APK_PATH"
+          
+          # 2. Распаковываем конкретный libbox.so из этого APK прямо в корень репозитория
+          # Внутри APK все библиотеки лежат по пути lib/архитектура/
+          unzip -j "$APK_PATH" "lib/arm64-v8a/libbox.so" -d ./
+          
+          # 3. Проверяем, появился ли файл в корне
           if [ -f "./libbox.so" ]; then
-          ls -lh ./libbox.so
+            echo "✅ Библиотека libbox.so успешно извлечена!"
+            ls -lh ./libbox.so
           else
-            echo "❌ Ошибка: файл libbox.so не найден в проекте!"
+            echo "❌ Ошибка: Внутри APK не найден файл lib/arm64-v8a/libbox.so"
             exit 1
           fi
 
