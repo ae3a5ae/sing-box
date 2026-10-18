@@ -718,7 +718,7 @@ jobs:
           export PATH="$PATH:$(go env GOPATH)/bin"
           go run ./cmd/internal/build_libbox -target android -platform android/${{ matrix.go_arch }}
           mkdir -p dist/${{ matrix.go_arch }}
-          cp libbox.aar ./
+          unzip -j "jni/arm64-v8a/libbox.so" ./
           mv libbox.aar libbox-legacy.aar dist/${{ matrix.go_arch }}
         env:
           ANDROID_NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
