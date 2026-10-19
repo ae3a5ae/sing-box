@@ -92,6 +92,13 @@ jobs:
           path: ~/go/pkg/mod
           key: go-mod-linux-${{ hashFiles('go.sum') }}
           restore-keys: go-mod-linux-
+      - name: Cache Go build outputs
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/go-build
+          key: go-build-linux-go1.26.8-android-arm64-${{ github.sha }}
+          restore-keys: |
+            go-build-linux-go1.26.8-android-arm64-
       - name: Setup Android NDK
         id: setup-ndk
         uses: nttld/setup-ndk@v1
