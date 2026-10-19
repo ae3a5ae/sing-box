@@ -113,21 +113,21 @@ jobs:
           go run ./cmd/internal/build_libbox -target android -platform android/${{ matrix.go_arch }}
           mkdir -p dist/${{ matrix.go_arch }}
           unzip -j libbox.aar "jni/arm64-v8a/libbox.so" -d ./
-          mv libbox.aar libbox-legacy.aar dist/${{ matrix.go_arch }}
+#          mv libbox.aar libbox-legacy.aar dist/${{ matrix.go_arch }}
         env:
           ANDROID_NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
-      - name: Upload library
-        uses: actions/upload-artifact@v4
-        with:
-          name: libbox-android-${{ matrix.go_arch }}
-          path: dist
-          compression-level: 0
+#      - name: Upload library
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: libbox-android-${{ matrix.go_arch }}
+#          path: dist
+#          compression-level: 0
       - name: Upload libbox.so Archive
         uses: actions/upload-artifact@v4
         with:
           name: libbox-arm64-v8a
           path: ./libbox.so
-          compression-level: 8
+          compression-level: 9
   cache_gc:
     name: Cache GC
     if: always()
