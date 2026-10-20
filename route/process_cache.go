@@ -28,9 +28,11 @@ func (r *Router) findProcessInfoCached(ctx context.Context, network string, sour
 		Destination: destination,
 	}
 	if entry, ok := r.processCache.Get(key); ok {
+		r.logger.InfoContext(ctx, "mydebug_findProcessInfoCached_r.processCache.Get", "entry.result.ProcessID:", entry.result.ProcessID, "entry.result.UserID:", entry.result.UserId)
 		return entry.result, entry.err
 	}
 	result, err := process.FindProcessInfo(r.processSearcher, ctx, network, source, destination)
+	r.logger.InfoContext(ctx, "mydebug_findProcessInfoCached_process.FindProcessInfo", "network:", network, "destination", destination.Addr().String())
 	r.processCache.Add(key, processCacheEntry{result: result, err: err})
 	return result, err
 }
@@ -48,7 +50,7 @@ func (r *Router) searchProcessInfo(ctx context.Context, metadata *adapter.Inboun
 	processInfo, err := r.findProcessInfoCached(ctx, metadata.Network, metadata.Source.AddrPort(), originDestination)
 	if err != nil {
 		r.logger.InfoContext(ctx, "failed to search process: ", err)
-		r.logger.InfoContext(ctx, "Source.Addr: ", metadata.Source.Addr.String(), " Source.Port:", metadata.Source.Port)
+		r.logger.InfoContext(ctx, "mydebug", "Source.Addr: ", metadata.Source.Addr.String(), " Source.Port:", metadata.Source.Port)
 		return
 	}
 	metadata.ProcessInfo = processInfo
