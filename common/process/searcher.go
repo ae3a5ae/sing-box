@@ -7,7 +7,7 @@ import (
 
 	"github.com/sagernet/sing-box/adapter"
 	"github.com/sagernet/sing-box/log"
-	"github.com/sagernet/sing-tun"
+	tun "github.com/sagernet/sing-tun"
 	E "github.com/sagernet/sing/common/exceptions"
 	F "github.com/sagernet/sing/common/format"
 )
@@ -30,6 +30,7 @@ func FindProcessInfo(searcher Searcher, ctx context.Context, network string, sou
 	if err != nil {
 		return nil, err
 	}
+	log.Debug(ctx, "mydebug-searcher.go-FindProcessInfo: ", "len(info.AndroidPackageNames)=", len(info.AndroidPackageNames), " info.ProcessID=", info.ProcessID, " info.ProcessPath=", info.ProcessPath, " info.UserId=", info.UserId, " info.UserName=", info.UserName)
 	if info.UserId != -1 && info.UserName == "" {
 		osUser, _ := user.LookupId(F.ToString(info.UserId))
 		if osUser != nil {
