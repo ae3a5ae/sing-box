@@ -7,6 +7,7 @@ import (
 
 	"github.com/sagernet/sing-box/adapter"
 	"github.com/sagernet/sing-box/common/process"
+	"github.com/sagernet/sing-box/log"
 	N "github.com/sagernet/sing/common/network"
 )
 
@@ -19,6 +20,7 @@ func newPlatformSearcher(platform adapter.PlatformInterface) process.Searcher {
 }
 
 func (s *platformSearcher) FindProcessInfo(ctx context.Context, network string, source netip.AddrPort, destination netip.AddrPort) (*adapter.ConnectionOwner, error) {
+	log.Debug("mydebug-platform_searcher.go-FindProcessInfo: ", "network=", network, " destination=", destination.String())
 	if !s.platform.UsePlatformConnectionOwnerFinder() {
 		return nil, process.ErrNotFound
 	}
@@ -40,7 +42,7 @@ func (s *platformSearcher) FindProcessInfo(ctx context.Context, network string, 
 		DestinationAddress: destination.Addr().String(),
 		DestinationPort:    int32(destination.Port()),
 	}
-
+	log.Debug("mydebug-platform_searcher.go-before_FindConnectionOwner")
 	return s.platform.FindConnectionOwner(request)
 }
 

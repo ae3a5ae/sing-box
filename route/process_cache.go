@@ -8,6 +8,7 @@ import (
 
 	"github.com/sagernet/sing-box/adapter"
 	"github.com/sagernet/sing-box/common/process"
+	"github.com/sagernet/sing-box/log"
 )
 
 type processCacheKey struct {
@@ -32,7 +33,7 @@ func (r *Router) findProcessInfoCached(ctx context.Context, network string, sour
 	   		return entry.result, entry.err
 	   	} */
 	result, err := process.FindProcessInfo(r.processSearcher, ctx, network, source, destination)
-	r.logger.InfoContext(ctx, "mydebug_findProcessInfoCached_process.FindProcessInfo", "network:", network, "destination", destination.Addr().String())
+	log.Debug("mydebug_findProcessInfoCached_process.FindProcessInfo", "network:", network, "destination", destination.Addr().String())
 	//	r.processCache.Add(key, processCacheEntry{result: result, err: err})
 	return result, err
 }
@@ -50,7 +51,7 @@ func (r *Router) searchProcessInfo(ctx context.Context, metadata *adapter.Inboun
 	processInfo, err := r.findProcessInfoCached(ctx, metadata.Network, metadata.Source.AddrPort(), originDestination)
 	if err != nil {
 		r.logger.InfoContext(ctx, "failed to search process: ", err)
-		//	r.logger.InfoContext(ctx, "mydebug", "Source.Addr: ", metadata.Source.Addr.String(), " Source.Port:", metadata.Source.Port)
+		log.Debug("mydebug", "Source.Addr: ", metadata.Source.Addr.String(), " Source.Port:", metadata.Source.Port)
 		return
 	}
 	metadata.ProcessInfo = processInfo
