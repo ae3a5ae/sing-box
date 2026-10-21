@@ -15,6 +15,7 @@ import (
 	"github.com/sagernet/sing-box/adapter"
 	C "github.com/sagernet/sing-box/constant"
 	"github.com/sagernet/sing-box/experimental/libbox/internal/procfs"
+	"github.com/sagernet/sing-box/log"
 	"github.com/sagernet/sing-box/option"
 	"github.com/sagernet/sing-box/service/powerreport"
 	tun "github.com/sagernet/sing-tun"
@@ -217,11 +218,15 @@ func (w *platformInterfaceWrapper) FindConnectionOwner(request *adapter.FindConn
 			UserId: uid,
 		}, nil
 	}
-
+	log.Debug("mydebug-service.go-before_w.iif.FindConnectionOwner")
 	result, err := w.iif.FindConnectionOwner(request.IpProtocol, request.SourceAddress, request.SourcePort, request.DestinationAddress, request.DestinationPort)
 	if err != nil {
 		return nil, err
 	}
+	log.Debug("mydebug-service.go-after_w.iif.FindConnectionOwner:", " UserId=", result.UserId,
+		" UserName=", result.UserName, " ProcessPath=", result.ProcessPath,
+		" len(result.androidPackageNames)=", len(result.androidPackageNames))
+
 	return &adapter.ConnectionOwner{
 		UserId:              result.UserId,
 		UserName:            result.UserName,

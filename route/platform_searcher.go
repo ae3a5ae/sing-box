@@ -20,7 +20,7 @@ func newPlatformSearcher(platform adapter.PlatformInterface) process.Searcher {
 }
 
 func (s *platformSearcher) FindProcessInfo(ctx context.Context, network string, source netip.AddrPort, destination netip.AddrPort) (*adapter.ConnectionOwner, error) {
-	log.Debug("mydebug-platform_searcher.go-FindProcessInfo: ", "network=", network, " destination=", destination.String())
+	log.Debug("mydebug-platform_searcher.go-FindProcessInfo: ", "network=", network, " destination=", destination.String(), " s.platform.UsePlatformConnectionOwnerFinder()=", s.platform.UsePlatformConnectionOwnerFinder())
 	if !s.platform.UsePlatformConnectionOwnerFinder() {
 		return nil, process.ErrNotFound
 	}
