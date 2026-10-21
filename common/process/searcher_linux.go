@@ -78,6 +78,7 @@ func (s *linuxSearcher) Close() error {
 
 func (s *linuxSearcher) FindProcessInfo(ctx context.Context, network string, source netip.AddrPort, destination netip.AddrPort) (*adapter.ConnectionOwner, error) {
 	inode, uid, err := s.resolveSocketByNetlink(network, source, destination)
+	log.Debug(ctx, "mydebug-searcher_linux.go-FindProcessInfo: hit!")
 	if err != nil {
 		return nil, err
 	}
