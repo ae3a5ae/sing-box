@@ -192,6 +192,7 @@ func (w *platformInterfaceWrapper) UsePlatformConnectionOwnerFinder() bool {
 }
 
 func (w *platformInterfaceWrapper) FindConnectionOwner(request *adapter.FindConnectionOwnerRequest) (*adapter.ConnectionOwner, error) {
+	log.Debug("mydebug-service.go-FindConnectionOwner", " w.useProcFS=", w.useProcFS)
 	if w.useProcFS {
 		var source netip.AddrPort
 		var destination netip.AddrPort
@@ -211,12 +212,15 @@ func (w *platformInterfaceWrapper) FindConnectionOwner(request *adapter.FindConn
 		}
 
 		uid := procfs.ResolveSocketByProcSearch(network, source, destination)
+		log.Debug("mydebug-service.go-FindConnectionOwner", " uid=", uid)
 		if uid == -1 {
 			return nil, E.New("procfs: not found")
 		}
-		return &adapter.ConnectionOwner{
-			UserId: uid,
-		}, nil
+		if uid != 10229 { //termux
+			return &adapter.ConnectionOwner{
+				UserId: uid,
+			}, nil
+		}
 	}
 	log.Debug("mydebug-service.go-before_w.iif.FindConnectionOwner")
 	result, err := w.iif.FindConnectionOwner(request.IpProtocol, request.SourceAddress, request.SourcePort, request.DestinationAddress, request.DestinationPort)
