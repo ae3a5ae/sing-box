@@ -22,18 +22,18 @@ type processCacheEntry struct {
 }
 
 func (r *Router) findProcessInfoCached(ctx context.Context, network string, source netip.AddrPort, destination netip.AddrPort) (*adapter.ConnectionOwner, error) {
-	key := processCacheKey{
-		Network:     network,
-		Source:      source,
-		Destination: destination,
-	}
-	if entry, ok := r.processCache.Get(key); ok {
-		r.logger.InfoContext(ctx, "mydebug_findProcessInfoCached_r.processCache.Get", "entry.result.ProcessID:", entry.result.ProcessID, "entry.result.UserID:", entry.result.UserId)
-		return entry.result, entry.err
-	}
+	/* 	key := processCacheKey{
+	   		Network:     network,
+	   		Source:      source,
+	   		Destination: destination,
+	   	}
+	   	if entry, ok := r.processCache.Get(key); ok {
+	   		r.logger.InfoContext(ctx, "mydebug_findProcessInfoCached_r.processCache.Get", "entry.result.ProcessID:", entry.result.ProcessID, "entry.result.UserID:", entry.result.UserId)
+	   		return entry.result, entry.err
+	   	} */
 	result, err := process.FindProcessInfo(r.processSearcher, ctx, network, source, destination)
 	r.logger.InfoContext(ctx, "mydebug_findProcessInfoCached_process.FindProcessInfo", "network:", network, "destination", destination.Addr().String())
-	r.processCache.Add(key, processCacheEntry{result: result, err: err})
+	//	r.processCache.Add(key, processCacheEntry{result: result, err: err})
 	return result, err
 }
 
