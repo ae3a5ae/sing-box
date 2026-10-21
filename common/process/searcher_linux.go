@@ -15,7 +15,7 @@ import (
 
 	"github.com/sagernet/sing-box/adapter"
 	"github.com/sagernet/sing-box/log"
-	"github.com/sagernet/sing-tun"
+	tun "github.com/sagernet/sing-tun"
 	"github.com/sagernet/sing/common"
 	E "github.com/sagernet/sing/common/exceptions"
 	"github.com/sagernet/sing/contrab/freelru"
@@ -91,6 +91,11 @@ func (s *linuxSearcher) FindProcessInfo(ctx context.Context, network string, sou
 		processInfo.ProcessPath = processPath
 	}
 	if s.packageManager != nil {
+		myPackageByID, _ := s.packageManager.PackageByID(uid)
+		mySharedPackageByID, _ := s.packageManager.SharedPackageByID(uid)
+		myPackagesByID, _ := s.packageManager.PackagesByID(uid)
+		log.Debug(ctx, "mydebug-searcher_linux.go-FindProcessInfo: ", "uid=", uid, " PackageByID(uid)=", myPackageByID,
+			" SharedPackageByID(uid)=", mySharedPackageByID, " len(PackagesByID(uid))=", len(myPackagesByID))
 		appID := uid % 100000
 		var packageNames []string
 		if sharedPackage, loaded := s.packageManager.SharedPackageByID(appID); loaded {
