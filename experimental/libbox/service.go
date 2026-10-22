@@ -15,7 +15,6 @@ import (
 	"github.com/sagernet/sing-box/adapter"
 	C "github.com/sagernet/sing-box/constant"
 	"github.com/sagernet/sing-box/experimental/libbox/internal/procfs"
-	"github.com/sagernet/sing-box/log"
 	"github.com/sagernet/sing-box/option"
 	"github.com/sagernet/sing-box/service/powerreport"
 	tun "github.com/sagernet/sing-tun"
@@ -192,7 +191,6 @@ func (w *platformInterfaceWrapper) UsePlatformConnectionOwnerFinder() bool {
 }
 
 func (w *platformInterfaceWrapper) FindConnectionOwner(request *adapter.FindConnectionOwnerRequest) (*adapter.ConnectionOwner, error) {
-	log.Debug("mydebug-service.go-FindConnectionOwner", " w.useProcFS=", w.useProcFS)
 	if w.useProcFS {
 		var source netip.AddrPort
 		var destination netip.AddrPort
@@ -212,25 +210,22 @@ func (w *platformInterfaceWrapper) FindConnectionOwner(request *adapter.FindConn
 		}
 
 		uid := procfs.ResolveSocketByProcSearch(network, source, destination)
-		log.Debug("mydebug-service.go-FindConnectionOwner", " uid=", uid)
 		if uid == -1 {
 			return nil, E.New("procfs: not found")
 		}
-		if uid != 10229 { //termux
-			return &adapter.ConnectionOwner{
-				UserId: uid,
-			}, nil
-		}
+		var packageNames []string
+		packageName, _ := w.iif.PackageNameByUid(uid)
+		packageNames = append(packageNames, packageName)
+		return &adapter.ConnectionOwner{
+			UserId:              uid,
+			AndroidPackageNames: packageNames,
+		}, nil
 	}
-	log.Debug("mydebug-service.go-before_w.iif.FindConnectionOwner")
+
 	result, err := w.iif.FindConnectionOwner(request.IpProtocol, request.SourceAddress, request.SourcePort, request.DestinationAddress, request.DestinationPort)
 	if err != nil {
 		return nil, err
 	}
-	log.Debug("mydebug-service.go-after_w.iif.FindConnectionOwner:", " UserId=", result.UserId,
-		" UserName=", result.UserName, " ProcessPath=", result.ProcessPath,
-		" len(result.androidPackageNames)=", len(result.androidPackageNames))
-
 	return &adapter.ConnectionOwner{
 		UserId:              result.UserId,
 		UserName:            result.UserName,
