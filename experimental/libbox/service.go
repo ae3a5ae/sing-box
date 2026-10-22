@@ -15,6 +15,7 @@ import (
 	"github.com/sagernet/sing-box/adapter"
 	C "github.com/sagernet/sing-box/constant"
 	"github.com/sagernet/sing-box/experimental/libbox/internal/procfs"
+	"github.com/sagernet/sing-box/log"
 	"github.com/sagernet/sing-box/option"
 	"github.com/sagernet/sing-box/service/powerreport"
 	tun "github.com/sagernet/sing-tun"
@@ -214,12 +215,20 @@ func (w *platformInterfaceWrapper) FindConnectionOwner(request *adapter.FindConn
 			return nil, E.New("procfs: not found")
 		}
 		var packageNames []string
-		packageName, _ := w.iif.PackageNameByUid(uid)
-		packageNames = append(packageNames, packageName)
-		return &adapter.ConnectionOwner{
-			UserId:              uid,
-			AndroidPackageNames: packageNames,
-		}, nil
+		packageName, err := w.iif.PackageNameByUid(uid)
+
+		if err != nil {
+			return &adapter.ConnectionOwner{
+				UserId: uid,
+			}, nil
+		} else {
+			log.Debug("mydebug_service.go-FindConnectionOwner", " packageName:", packageName, " uid:", uid)
+			packageNames = append(packageNames, packageName)
+			return &adapter.ConnectionOwner{
+				UserId:              uid,
+				AndroidPackageNames: packageNames,
+			}, nil
+		}
 	}
 
 	result, err := w.iif.FindConnectionOwner(request.IpProtocol, request.SourceAddress, request.SourcePort, request.DestinationAddress, request.DestinationPort)
