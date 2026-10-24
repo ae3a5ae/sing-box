@@ -212,13 +212,18 @@ func (w *platformInterfaceWrapper) FindConnectionOwner(request *adapter.FindConn
 			return nil, E.New("unknown protocol: ", request.IpProtocol)
 		}
 
-		uid := procfs.ResolveSocketByProcSearch(network, source, destination)
-		if uid == -1 {
-			return nil, E.New("procfs: not found")
+		try6 := false // first search attempt
+		uid := procfs.ResolveSocketByProcSearch_try6(network, source, destination, try6)
+		if uid == -1 && source.Addr().Is4() { // don't try again if already IPv6 addr
+			try6 = true //second attempt, search /proc/net/...6
+			uid = procfs.ResolveSocketByProcSearch_try6(network, source, destination, try6)
+			if uid == -1 {
+				return nil, E.New("procfs: not found")
+			}
 		}
 		var packageNames []string
 		packageName, err := w.iif.PackageNameByUid(uid)
-		log.Debug("mydebug_service.go-FindConnectionOwner_w.iif.PackageNameByUid(uid)", " hit")
+		log.Debug("mydebug_service.go-FindConnectionOwner_w.iif.PackageNameByUid(uid)", " hit", " packageName=", packageName, " err=", err)
 
 		if err != nil {
 			return &adapter.ConnectionOwner{

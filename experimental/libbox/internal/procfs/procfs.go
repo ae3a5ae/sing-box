@@ -12,6 +12,7 @@ import (
 	"strings"
 	"unsafe"
 
+	"github.com/sagernet/sing-box/log"
 	N "github.com/sagernet/sing/common/network"
 )
 
@@ -30,7 +31,7 @@ func init() {
 	}
 }
 
-func ResolveSocketByProcSearch(network string, source, _ netip.AddrPort) int32 {
+func ResolveSocketByProcSearch_try6(network string, source, _ netip.AddrPort, try6 bool) int32 {
 	if netIndexOfLocal < 0 || netIndexOfUid < 0 {
 		return -1
 	}
@@ -43,11 +44,20 @@ func ResolveSocketByProcSearch(network string, source, _ netip.AddrPort) int32 {
 		path += "udp"
 	}
 
-	if source.Addr().Is6() {
+	if source.Addr().Is6() || try6 { // try to search /proc/net/...6 if asked
 		path += "6"
 	}
 
+	var sIP_6 [16]byte
 	sIP := source.Addr().AsSlice()
+
+	if try6 {
+		sIP_6 = source.Addr().As16()
+		sIP = sIP_6[:]
+	}
+
+	log.Debug("mydebug_procfs.go-ResolveSocketByProcSearch_try6", " path=", path, " sIP=", sIP)
+
 	if len(sIP) == 0 {
 		return -1
 	}
@@ -55,6 +65,8 @@ func ResolveSocketByProcSearch(network string, source, _ netip.AddrPort) int32 {
 	var bytes [2]byte
 	binary.BigEndian.PutUint16(bytes[:], source.Port())
 	local := fmt.Sprintf("%s:%s", hex.EncodeToString(nativeEndianIP(sIP)), hex.EncodeToString(bytes[:]))
+
+	log.Debug("mydebug_procfs.go-ResolveSocketByProcSearch_try6", " local=", local)
 
 	file, err := os.Open(path)
 	if err != nil {
