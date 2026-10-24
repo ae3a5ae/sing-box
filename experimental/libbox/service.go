@@ -192,7 +192,9 @@ func (w *platformInterfaceWrapper) UsePlatformConnectionOwnerFinder() bool {
 }
 
 func (w *platformInterfaceWrapper) FindConnectionOwner(request *adapter.FindConnectionOwnerRequest) (*adapter.ConnectionOwner, error) {
+	log.Debug("mydebug_service.go-FindConnectionOwner", " hit")
 	if w.useProcFS {
+		log.Debug("mydebug_service.go-FindConnectionOwner_useprocfs:", " hit")
 		var source netip.AddrPort
 		var destination netip.AddrPort
 		sourceAddr, _ := netip.ParseAddr(request.SourceAddress)
@@ -216,6 +218,7 @@ func (w *platformInterfaceWrapper) FindConnectionOwner(request *adapter.FindConn
 		}
 		var packageNames []string
 		packageName, err := w.iif.PackageNameByUid(uid)
+		log.Debug("mydebug_service.go-FindConnectionOwner_w.iif.PackageNameByUid(uid)", " hit")
 
 		if err != nil {
 			return &adapter.ConnectionOwner{
