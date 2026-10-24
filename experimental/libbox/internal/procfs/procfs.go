@@ -55,7 +55,7 @@ func ResolveSocketByProcSearch_try6(network string, source, _ netip.AddrPort, tr
 		sIP = sIP_6[:]
 	}
 
-	log.Debug("mydebug_procfs.go-ResolveSocketByProcSearch_try6", " path=", path, " sIP=", sIP)
+	log.Debug("mydebug_procfs.go-ResolveSocketByProcSearch_try6", " path=", path, " sIP=", string(sIP))
 
 	if len(sIP) == 0 {
 		return -1
