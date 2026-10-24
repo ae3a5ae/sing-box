@@ -48,11 +48,10 @@ func ResolveSocketByProcSearch_try6(network string, source, _ netip.AddrPort, tr
 		path += "6"
 	}
 
-	var sIP_6 [16]byte
 	sIP := source.Addr().AsSlice()
 
 	if try6 {
-		sIP_6 = source.Addr().As16()
+		sIP_6 := source.Addr().As16()
 		sIP = sIP_6[:]
 	}
 
