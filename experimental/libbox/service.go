@@ -213,9 +213,21 @@ func (w *platformInterfaceWrapper) FindConnectionOwner(request *adapter.FindConn
 		if uid == -1 {
 			return nil, E.New("procfs: not found")
 		}
-		return &adapter.ConnectionOwner{
-			UserId: uid,
-		}, nil
+
+		var packageNames []string
+		packageName, err := w.iif.PackageNameByUid(uid)
+
+		if err != nil {
+			return &adapter.ConnectionOwner{
+				UserId: uid,
+			}, nil
+		} else {
+			packageNames = append(packageNames, packageName)
+			return &adapter.ConnectionOwner{
+				UserId:              uid,
+				AndroidPackageNames: packageNames,
+			}, nil
+		}
 	}
 
 	result, err := w.iif.FindConnectionOwner(request.IpProtocol, request.SourceAddress, request.SourcePort, request.DestinationAddress, request.DestinationPort)
