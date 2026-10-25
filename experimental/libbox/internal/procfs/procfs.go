@@ -30,7 +30,8 @@ func init() {
 	}
 }
 
-func ResolveSocketByProcSearch(network string, source, _ netip.AddrPort) int32 {
+func ResolveSocketByProcSearch_try6(network string, source, _ netip.AddrPort, try6 bool) int32 {
+
 	if netIndexOfLocal < 0 || netIndexOfUid < 0 {
 		return -1
 	}
@@ -43,11 +44,16 @@ func ResolveSocketByProcSearch(network string, source, _ netip.AddrPort) int32 {
 		path += "udp"
 	}
 
-	if source.Addr().Is6() {
+	if source.Addr().Is6() || try6 { // try to search /proc/net/...6 if asked
 		path += "6"
 	}
 
 	sIP := source.Addr().AsSlice()
+	if try6 {
+		sIP_6 := source.Addr().As16()
+		sIP = sIP_6[:]
+	}
+
 	if len(sIP) == 0 {
 		return -1
 	}
